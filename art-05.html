@@ -195,30 +195,38 @@ a.work-item{
 .work-item:hover .copy h3{opacity:.7;}
 
 /* ---------- detail page ---------- */
-.detail-hero{
-  height:56vh; width:100%; overflow:hidden;
-}
-.detail-copy{max-width:720px; margin:0 auto; padding:56px 0 0; text-align:center;}
+.detail-copy{max-width:640px; margin:0; padding:64px 0 0 0; text-align:left;}
 .detail-copy p.eyebrow{
   font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--mute); margin:0 0 6px;
 }
 .detail-copy h1{
   font-family:'Cormorant Garamond', serif; font-weight:400;
-  font-size:clamp(30px,4.4vw,48px); margin:0 0 24px;
+  font-size:clamp(30px,4.4vw,48px); margin:0 0 14px;
 }
-.detail-copy p.body{color:#3a3733; max-width:600px; margin:0 auto;}
-.detail-gallery{
-  display:grid; grid-template-columns:repeat(2,1fr); gap:24px;
-  padding:64px 0;
+.detail-slides{
+  display:flex; gap:20px; overflow-x:auto; padding:56px 0;
+  scroll-snap-type:x proximity;
 }
-@media (max-width:700px){ .detail-gallery{grid-template-columns:1fr;} }
-.detail-gallery .frame{aspect-ratio:4/5; overflow:hidden; background:#e9e5dc;}
+.detail-slides .slide{
+  flex:0 0 auto; width:min(280px, 70vw); aspect-ratio:5/7; overflow:hidden;
+  background:#e9e5dc; cursor:zoom-in; scroll-snap-align:start;
+}
+.detail-slides .slide img{transition:transform .4s ease;}
+.detail-slides .slide:hover img{transform:scale(1.04);}
 .back-link{
   display:inline-block; margin:8px 0 48px;
   font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--mute);
   border-bottom:1px solid transparent; transition:border-color .2s ease, color .2s ease;
 }
 .back-link:hover{color:var(--ink); border-color:var(--ink);}
+
+/* ---------- lightbox ---------- */
+.lightbox{
+  position:fixed; inset:0; z-index:200; background:rgba(18,17,15,0.94);
+  display:none; align-items:center; justify-content:center; padding:40px; cursor:zoom-out;
+}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:92vw; max-height:92vh; width:auto; height:auto; object-fit:contain; box-shadow:0 10px 50px rgba(0,0,0,0.6);}
 
 /* ---------- contact ---------- */
 .contact-block{text-align:center; padding:40px 0;}
@@ -271,24 +279,22 @@ footer .wordmark{display:block; margin-bottom:16px;}
   </div>
 </header>
 
-<section class="detail-hero">
-  <img src="https://picsum.photos/seed/art-05/1600/1000" alt="">
-</section>
-
 <section class="section" style="padding-top:0;">
   <div class="wrap">
     <div class="detail-copy reveal">
-      <p class="eyebrow">Oil on linen — 2024</p>
       <h1>Two Boats, No Names</h1>
-      <p class="body">Extended description of this piece — process, materials, context, or the story behind it. Replace with your own copy once you send over the details.</p>
+      <p class="eyebrow">Oil on linen — 2024</p>
     </div>
 
-    <div class="detail-gallery reveal">
-      <div class="frame"><img src="https://picsum.photos/seed/art-05-b/700/900" alt=""></div>
-      <div class="frame"><img src="https://picsum.photos/seed/art-05-c/700/900" alt=""></div>
-      <div class="frame"><img src="https://picsum.photos/seed/art-05-d/700/900" alt=""></div>
-      <div class="frame"><img src="https://picsum.photos/seed/art-05-e/700/900" alt=""></div>
+    <div class="detail-slides reveal">
+      <div class="slide"><img src="https://picsum.photos/seed/art-05-a/500/700" alt=""></div>
+      <div class="slide"><img src="https://picsum.photos/seed/art-05-b/500/700" alt=""></div>
+      <div class="slide"><img src="https://picsum.photos/seed/art-05-c/500/700" alt=""></div>
+      <div class="slide"><img src="https://picsum.photos/seed/art-05-d/500/700" alt=""></div>
+      <div class="slide"><img src="https://picsum.photos/seed/art-05-e/500/700" alt=""></div>
     </div>
+
+    <p class="body" style="max-width:640px; color:#3a3733; margin:0 0 40px;">Extended description of this piece — process, materials, context, or the story behind it. Replace with your own copy once you send over the details.</p>
 
     <a href="art.html" class="back-link">← Back to Portfolio</a>
   </div>
@@ -342,6 +348,27 @@ document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.project-nav a').forEach(function(a){
     var href = a.getAttribute('href');
     if(href === here){ a.classList.add('active'); }
+  });
+});
+
+
+// lightbox for detail-page slide deck
+document.addEventListener('DOMContentLoaded', function(){
+  var slides = document.querySelectorAll('.detail-slides .slide img');
+  if(!slides.length) return;
+  var lb = document.createElement('div');
+  lb.className = 'lightbox';
+  var lbImg = document.createElement('img');
+  lb.appendChild(lbImg);
+  document.body.appendChild(lb);
+  slides.forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src;
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', function(){
+    lb.classList.remove('open');
   });
 });
 
